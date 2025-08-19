@@ -18,23 +18,23 @@ validations).\
 ## 2) Scope
 
 -   Applies to *generative pipelines* (apps, data, documentation,
-    code).\
+    code).
 -   Multi-provider and multi-agent (e.g., GPT/Claude/Gemini +
-    subagents).\
+    subagents).
 -   Compatible with external orchestrators (CLI, bus of agents, CI
     runners).
 
 ## 3) Terms & Roles
 
 -   **App‑Context**: State, artifacts, and signals of the *specific
-    task*.\
+    task*.
 -   **Motor‑Context**: State of the *plant/motor*: prompts, templates,
-    rules, validators.\
+    rules, validators.
 -   **Operator (AI‑Operator)**: Supervisory agent that arbitrates:
     classifies incidents, decides plan of action, coordinates
-    pause‑patch‑resume.\
+    pause‑patch‑resume.
 -   **Observers**: Subagents/sensors that collect signals (metrics,
-    validation, traces, costs) and deliver them to the Operator.\
+    validation, traces, costs) and deliver them to the Operator.
 -   **Tooling/Plant**: The executing tool/platform (e.g., app factory).
 
 ## 4) Problem Statement
@@ -47,20 +47,20 @@ motor, or touching the motor when the problem is app-specific. Result:
 ## 5) Solution Overview
 
 Insert an **Operator--Observer Layer** with **dual context**: -
-**Observers** instrument both app‑context and motor‑context.\
+**Observers** instrument both app‑context and motor‑context.
 - **Operator** consumes signals, **classifies** (app vs. motor
-vs. mixed), **decides** and **executes**:\
-- *App‑Fix*: local patch (prompt, spec, mapping, dependency).\
+vs. mixed), **decides** and **executes**:
+- *App‑Fix*: local patch (prompt, spec, mapping, dependency).
 - *Motor‑Fix*: patch of rules/templates/validators + documented
-feedback.\
-- *Mixed*: safe sequence (e.g., motor then app).\
-- **Resumability**: pause, patch, **resume** without starting over.\
+feedback.
+- *Mixed*: safe sequence (e.g., motor then app).
+- **Resumability**: pause, patch, **resume** without starting over.
 - **Learning Loop**: motor fixes are consolidated (versioned,
 changelogged) to benefit future runs.
 
 ## 6) Non‑Goals
 
--   Not tied to one AI vendor or tool.\
+-   Not tied to one AI vendor or tool.
 -   Does not prescribe prompt/template formats, only **minimal
     interfaces**.
 
@@ -70,40 +70,40 @@ changelogged) to benefit future runs.
 
 ### 7.1 Context Separation
 
--   MUST persist **App‑Context** and **Motor‑Context** separately.\
--   MUST version both contexts (semantic ID + artifact hash).\
+-   MUST persist **App‑Context** and **Motor‑Context** separately.
+-   MUST version both contexts (semantic ID + artifact hash).
 -   SHOULD allow diffs and checkpoints for resumption.
 
 ### 7.2 Observation
 
--   Observers MUST emit structured events:\
-    `{ timestamp, scope: "app"|"motor", signal_type, severity, payload }`.\
+-   Observers MUST emit structured events:
+    `{ timestamp, scope: "app"|"motor", signal_type, severity, payload }`.
 -   Minimal signal_types: `validation`, `error`, `latency`, `cost`,
-    `coverage`, `quality_score`.\
+    `coverage`, `quality_score`.
 -   SHOULD attach trace_id and artifact_ids.
 
 ### 7.3 Classification & Arbitration
 
--   Operator MUST use a **failure taxonomy** (see §10).\
--   Operator MUST produce a **decision record**.\
+-   Operator MUST use a **failure taxonomy** (see §10).
+-   Operator MUST produce a **decision record**.
 -   For mixed, Operator SHOULD apply deterministic order (motor→app).
 
 ### 7.4 Actuation
 
 -   For `app`: MUST apply local patches and retry with same motor
-    version.\
+    version.
 -   For `motor`: MUST create a change request, run tests, bump version
-    if needed, and **resume** app if validation passes.\
+    if needed, and **resume** app if validation passes.
 -   Pipeline MUST be resumable.
 
 ### 7.5 Learning Loop
 
--   Motor fixes MUST be logged and linked to metrics of impact.\
+-   Motor fixes MUST be logged and linked to metrics of impact.
 -   System SHOULD deduplicate incidents and promote learned patterns.
 
 ### 7.6 Safety & Governance
 
--   Motor changes MUST pass gates.\
+-   Motor changes MUST pass gates.
 -   MUST maintain rollback policy.
 
 ------------------------------------------------------------------------
@@ -173,51 +173,51 @@ States:
 
 ## 10) Error Taxonomy
 
--   **APP‑SPEC**: missing fields, invalid mappings.\
--   **APP‑BUILD**: broken dependency, compilation, integration test.\
--   **MOTOR‑RULES**: wrong validator, incomplete template.\
--   **MOTOR‑PERF**: latency/cost budget exceeded.\
+-   **APP‑SPEC**: missing fields, invalid mappings.
+-   **APP‑BUILD**: broken dependency, compilation, integration test.
+-   **MOTOR‑RULES**: wrong validator, incomplete template.
+-   **MOTOR‑PERF**: latency/cost budget exceeded.
 -   **MIXED‑DRIFT**: drift between motor version and app spec.
 
 ------------------------------------------------------------------------
 
 ## 11) Decision Heuristics
 
--   If reproduced in ≥2 apps → MOTOR‑RULES.\
--   If disappears when changing profile with same motor → APP.\
+-   If reproduced in ≥2 apps → MOTOR‑RULES.
+-   If disappears when changing profile with same motor → APP.
 -   If quality drops with new motor version → MIXED‑DRIFT.
 
 ------------------------------------------------------------------------
 
 ## 12) Safety, Rollback & Versioning
 
--   MUST use semantic versioning.\
--   MUST maintain rollback plan.\
+-   MUST use semantic versioning.
+-   MUST maintain rollback plan.
 -   Prefer roll‑forward safe fixes.
 
 ------------------------------------------------------------------------
 
 ## 13) Metrics & SLOs
 
--   **App SLOs**: build success, quality, latency, cost.\
--   **Motor SLOs**: incident categories, MTTR, impact.\
+-   **App SLOs**: build success, quality, latency, cost.
+-   **Motor SLOs**: incident categories, MTTR, impact.
 -   **Operator KPIs**: classification accuracy, resumption rate.
 
 ------------------------------------------------------------------------
 
 ## 14) Security & Compliance
 
--   MUST isolate app vs. motor data.\
--   SHOULD redact logs.\
+-   MUST isolate app vs. motor data.
+-   SHOULD redact logs.
 -   MUST enforce gated motor patches.
 
 ------------------------------------------------------------------------
 
 ## 15) Implementation Notes
 
--   Context store for transcripts, checkpoints, artifacts.\
--   Operator as policy engine.\
--   Observers as wrappers.\
+-   Context store for transcripts, checkpoints, artifacts.
+-   Operator as policy engine.
+-   Observers as wrappers.
 -   Orchestration integrated with agent bus.
 
 ------------------------------------------------------------------------
@@ -230,40 +230,40 @@ States:
 
 ## 17) Testing Strategy
 
--   Golden Incidents dataset.\
--   Replay harness.\
--   Chaos drills.\
--   Canary motor upgrades.\
+-   Golden Incidents dataset.
+-   Replay harness.
+-   Chaos drills.
+-   Canary motor upgrades.
 -   Contract tests.
 
 ------------------------------------------------------------------------
 
 ## 18) Anti‑Patterns
 
--   Mixing contexts.\
--   Observer without operator.\
--   Ungoverned motor fixes.\
+-   Mixing contexts.
+-   Observer without operator.
+-   Ungoverned motor fixes.
 -   Blind retries.
 
 ------------------------------------------------------------------------
 
 ## 19) Compliance Checklist
 
--   [ ] Separate contexts.\
--   [ ] Structured events.\
--   [ ] Operator decision records.\
--   [ ] Resumable pipeline.\
--   [ ] Changelog of motor fixes.\
+-   [ ] Separate contexts.
+-   [ ] Structured events.
+-   [ ] Operator decision records.
+-   [ ] Resumable pipeline.
+-   [ ] Changelog of motor fixes.
 -   [ ] Rollback tested.
 
 ------------------------------------------------------------------------
 
 ## 20) Example Flow
 
-1)  Observer emits validation error.\
-2)  Operator classifies as MOTOR‑RULES.\
-3)  Motor patched, validated, version bumped.\
-4)  App resumes from checkpoint → success.\
+1)  Observer emits validation error.
+2)  Operator classifies as MOTOR‑RULES.
+3)  Motor patched, validated, version bumped.
+4)  App resumes from checkpoint → success.
 5)  Decision record + impact logged.
 
 ------------------------------------------------------------------------
