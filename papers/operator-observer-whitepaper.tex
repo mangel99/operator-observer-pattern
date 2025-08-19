@@ -1,0 +1,103 @@
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{The Operator--Observer Pattern for AI Systems}
+\author{Manuel Angel Andrade Recio}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper introduces the Operator--Observer Pattern, an original architectural pattern designed for AI-driven systems that operate generative pipelines. Unlike classical design patterns (e.g., the GoF Observer), this pattern addresses dual-context supervision, allowing AI agents to not only solve task-specific (app-level) problems but also detect and improve systemic (motor-level) flaws. The Operator--Observer Pattern provides a structured approach for observation, classification, arbitration, and self-improvement, enabling AI systems to pause, patch, and resume tasks while consolidating lessons into the motor. We propose this pattern as a candidate for AI orchestration and reliability in multi-agent environments.
+\end{abstract}
+
+\section{Introduction}
+AI factories and generative pipelines face a recurring challenge: distinguishing whether errors arise from the application being built or from systemic flaws in the underlying platform. Traditional patterns such as Observer and Mediator address notification and coordination but do not provide mechanisms for arbitration across dual contexts. The Operator--Observer Pattern extends these ideas by introducing a supervisory operator capable of classifying and acting upon both app-level and motor-level issues, ensuring resilience and continuous improvement.
+
+\section{Pattern Definition}
+The Operator--Observer Pattern introduces a dual-context supervision mechanism consisting of four roles:
+\begin{itemize}
+    \item \textbf{App-Context}: the state, artifacts, and metrics of the task or app being built.
+    \item \textbf{Motor-Context}: the rules, templates, and validators of the underlying factory or platform.
+    \item \textbf{Observers}: specialized agents that collect signals from both contexts.
+    \item \textbf{Operator}: a supervisory agent that consumes observer signals, classifies failures, and decides whether to patch the app, patch the motor, or both.
+\end{itemize}
+This arbitration enables resumability: the pipeline can pause, patch, validate, and resume from checkpoints without restarting. Furthermore, motor-level fixes are consolidated, creating a learning loop that improves future runs.
+
+\section{Normative Requirements}
+The pattern specifies RFC-style normative requirements:
+\begin{itemize}
+    \item Contexts \textbf{MUST} be separated and versioned.
+    \item Observers \textbf{MUST} emit structured events including scope, type, severity, and payload.
+    \item The Operator \textbf{MUST} classify incidents using a defined taxonomy (App, Motor, Mixed).
+    \item Pipelines \textbf{MUST} support pause, patch, validate, and resume operations.
+    \item Motor fixes \textbf{MUST} be logged and versioned, feeding a continuous improvement loop.
+    \item Safety gates and rollback mechanisms \textbf{MUST} be enforced for motor changes.
+\end{itemize}
+
+\section{Error Taxonomy}
+The pattern defines a minimal error taxonomy:
+\begin{itemize}
+    \item \textbf{APP-SPEC}: specification errors such as missing fields or invalid mappings.
+    \item \textbf{APP-BUILD}: build errors such as broken dependencies or compilation failures.
+    \item \textbf{MOTOR-RULES}: systemic flaws in validators or templates.
+    \item \textbf{MOTOR-PERF}: performance or cost issues caused by the motor.
+    \item \textbf{MIXED-DRIFT}: misalignment between app expectations and motor version.
+\end{itemize}
+
+\section{Lifecycle and Heuristics}
+The Operator--Observer Pattern defines a lifecycle for execution:
+\[
+\text{IDLE} \rightarrow \text{RUNNING} \rightarrow \text{PAUSED} \rightarrow \text{PATCHING (Motor or App)} \rightarrow \text{VALIDATING} \rightarrow \text{RESUMING} \rightarrow \text{RUNNING} \rightarrow (\text{SUCCESS or FAILED})
+\]
+Decision heuristics guide arbitration: repeated failures across apps suggest motor issues, while profile-specific failures indicate app issues. Quality regressions with motor upgrades signal mixed drift requiring systemic attention.
+
+\section{Example Flow}
+Example execution:
+\begin{enumerate}
+    \item An observer detects a validation error in an app run.
+    \item The operator finds similar incidents across multiple apps and classifies it as MOTOR-RULES.
+    \item The motor is patched, validated, and version bumped.
+    \item The app resumes from its checkpoint and completes successfully.
+    \item The fix is logged and contributes to long-term motor improvement.
+\end{enumerate}
+
+\section{Related Work}
+The Operator--Observer Pattern extends ideas from the classical Observer and Mediator patterns, as well as supervisory control in control theory. However, it is distinct in addressing dual contexts (app vs. motor) and incorporating self-improvement as a first-class concern. It also overlaps with AIOps approaches but formalizes arbitration and dual-context separation as explicit architectural concerns.
+
+\section{Contributions}
+This work makes several contributions:
+\begin{itemize}
+    \item Defines the Operator--Observer Pattern as a novel AI architectural pattern.
+    \item Introduces dual-context supervision and arbitration as first-class concepts.
+    \item Provides a normative framework (requirements, taxonomy, lifecycle) for implementation.
+    \item Demonstrates applicability to AI factories and multi-agent orchestration frameworks.
+\end{itemize}
+
+\section{Future Work}
+Future directions for research and application include:
+\begin{itemize}
+    \item Empirical evaluation in large-scale multi-agent systems.
+    \item Integration with existing MLOps and LLMOps platforms.
+    \item Formal verification of arbitration logic.
+    \item Extending the taxonomy to cover additional AI reliability concerns (e.g., fairness, bias drift).
+\end{itemize}
+
+\section{Conclusion}
+The Operator--Observer Pattern offers a structured approach for AI orchestration in generative factories. By introducing dual-context supervision and a feedback-driven learning loop, it enables resilient, self-improving systems. We propose this pattern as a contribution to the catalog of emerging AI patterns and recommend further evaluation through implementation in multi-agent orchestration frameworks.
+
+\bibliographystyle{plain}
+\begin{thebibliography}{9}
+\bibitem{gof} Gamma, E., Helm, R., Johnson, R., Vlissides, J. (1994). \emph{Design Patterns: Elements of Reusable Object-Oriented Software}. Addison-Wesley.
+\bibitem{plop} Coplien, J., Schmidt, D. (eds.) (1995). \emph{Pattern Languages of Program Design}. Addison-Wesley.
+\end{thebibliography}
+
+\end{document}
