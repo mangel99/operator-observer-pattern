@@ -21,7 +21,7 @@ This allows AI systems to **pause, patch, resume**, and **self-improve** their o
 
 ## Files
 - `docs/operator-observer-spec.md` → Full specification (human-readable, extensible).  
-- `papers/operator-observer-whitepaper.pdf` → Whitepaper (academic style, suitable for citation).  
+- `papers/operator-observer-whitepaper.md`, `papers/operator-observer-whitepaper.tex` → Whitepaper (academic style, suitable for citation).  
 - `LICENSE` → MIT license (open use, attribution recommended).  
 
 ---
